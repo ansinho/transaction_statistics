@@ -1,5 +1,6 @@
 package com.anderson.transaction_statistics.repositories;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
@@ -16,5 +17,11 @@ public class TransactionRepository {
 
     public List<Transaction> findAll() {
         return new ArrayList<>(transactions);
+    }
+
+    public List<Transaction> findAfter(LocalDateTime seconds) {
+        return transactions.stream()
+                .filter(t -> !t.getDateTime().isBefore(seconds))
+                .toList();
     }
 }

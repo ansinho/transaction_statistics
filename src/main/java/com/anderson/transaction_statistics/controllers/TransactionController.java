@@ -5,11 +5,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.anderson.transaction_statistics.controllers.dtos.TransactionRequest;
 import com.anderson.transaction_statistics.models.Transaction;
 import com.anderson.transaction_statistics.services.TransactionService;
+import com.anderson.transaction_statistics.services.dtos.TransactionStatistics;
 
 import jakarta.validation.Valid;
 
@@ -34,5 +36,10 @@ public class TransactionController {
     @GetMapping
     public ResponseEntity<List<Transaction>> findAll() {
         return ResponseEntity.ok(transactionService.findAll());
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<TransactionStatistics> findStatistics(@RequestParam(defaultValue = "60") Long seconds) {
+        return ResponseEntity.ok(transactionService.findStatistics(seconds));
     }
 }
