@@ -36,19 +36,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidationErrors(
-            MethodArgumentNotValidException ex) {
+            MethodArgumentNotValidException ex, HttpServletRequest request) {
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
         String message = ex.getBindingResult()
                 .getFieldErrors()
-                .get(0)
-                .getDefaultMessage();
+                .stream()
+                .findFirst()
+                .map(err -> err.getDefaultMessage())
+                .orElse("Invalid request");
 
         ApiError error = new ApiError(
-                HttpStatus.BAD_REQUEST.value(),
-                message);
+                Instant.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message,
+                request.getRequestURI());
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(error);
+        return ResponseEntity.status(status).body(error);
     }
 }
